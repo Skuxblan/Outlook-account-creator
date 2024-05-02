@@ -123,54 +123,54 @@ class AccGen:
         self.password = password
 
     def open_signup_page(self):
-            chrome_options = Options()
-            chrome_options.add_argument("--lang=en")
-            chrome_options.add_argument("--headless=new")
+        chrome_options = Options()
+        chrome_options.add_argument("--lang=en")
+        chrome_options.add_argument("--headless=new")
         
-    if not self.driver:
-        mode = config['mode']
-
-        if mode == 0:
-            print("Not using proxy")
-        elif mode == 1:
-            print("Using proxy without authentication")
-            proxy_auth_plugin_path = create_proxy_extension_v3(
-                self.proxy_host,
-                self.proxy_port
-            )
-            chrome_options.add_extension(proxy_auth_plugin_path)
-        elif mode == 2:
-            print("Using proxy with authentication")
-            proxy_auth_plugin_path = create_proxy_extension_v3(
-                self.proxy_host,
-                self.proxy_port,
-                self.username,
-                self.password,
-            )
-            chrome_options.add_extension(proxy_auth_plugin_path)
-
-        chrome_options.add_extension('Captcha-Solver-Auto-captcha-solving-service.crx')
-
-        self.driver = webdriver.Chrome(options=chrome_options)
-
-        # Configure capsolver extension
-
-        time.sleep(2)
-        self.driver.get('https://www.google.com')
-        capsolver_src = self.driver.find_element(By.XPATH, '/html/script[2]')
-        capsolver_src = capsolver_src.get_attribute('src')
-        capsolver_ext_id = capsolver_src.split('/')[2]
-        self.driver.get(f'chrome-extension://{capsolver_ext_id}/www/index.html#/popup')
-        time.sleep(5)
-        
-        api_key_input = self.driver.find_element(By.XPATH, '//input[@placeholder="Please input your API key"]')
-        api_key_input.send_keys(api_key)
-        self.driver.find_element(By.ID, 'q-app').click()
-        time.sleep(5)
-
-
-        self.driver.get('https://signup.live.com/signup')
-        time.sleep(2)
+        if not self.driver:
+            mode = config['mode']
+    
+            if mode == 0:
+                print("Not using proxy")
+            elif mode == 1:
+                print("Using proxy without authentication")
+                proxy_auth_plugin_path = create_proxy_extension_v3(
+                    self.proxy_host,
+                    self.proxy_port
+                )
+                chrome_options.add_extension(proxy_auth_plugin_path)
+            elif mode == 2:
+                print("Using proxy with authentication")
+                proxy_auth_plugin_path = create_proxy_extension_v3(
+                    self.proxy_host,
+                    self.proxy_port,
+                    self.username,
+                    self.password,
+                )
+                chrome_options.add_extension(proxy_auth_plugin_path)
+    
+            chrome_options.add_extension('Captcha-Solver-Auto-captcha-solving-service.crx')
+    
+            self.driver = webdriver.Chrome(options=chrome_options)
+    
+            # Configure capsolver extension
+    
+            time.sleep(2)
+            self.driver.get('https://www.google.com')
+            capsolver_src = self.driver.find_element(By.XPATH, '/html/script[2]')
+            capsolver_src = capsolver_src.get_attribute('src')
+            capsolver_ext_id = capsolver_src.split('/')[2]
+            self.driver.get(f'chrome-extension://{capsolver_ext_id}/www/index.html#/popup')
+            time.sleep(5)
+            
+            api_key_input = self.driver.find_element(By.XPATH, '//input[@placeholder="Please input your API key"]')
+            api_key_input.send_keys(api_key)
+            self.driver.find_element(By.ID, 'q-app').click()
+            time.sleep(5)
+    
+    
+            self.driver.get('https://signup.live.com/signup')
+            time.sleep(2)
 
 
     def fill_signup_form(self):
