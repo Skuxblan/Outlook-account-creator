@@ -123,11 +123,11 @@ class AccGen:
         self.password = password
 
     def open_signup_page(self):
-        if not self.driver:
             chrome_options = Options()
             chrome_options.add_argument("--lang=en")
             chrome_options.add_argument("--headless=new")
-
+        
+    if not self.driver:
         mode = config['mode']
 
         if mode == 0:
