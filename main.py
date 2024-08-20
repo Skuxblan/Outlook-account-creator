@@ -128,7 +128,7 @@ class AccGen:
     def open_signup_page(self):
         chrome_options = Options()
         chrome_options.add_argument("--lang=en")
-       chrome_options.add_argument("--headless=new")
+        chrome_options.add_argument("--headless=new")
 
         # Download the latest NopeCHA crx extension file.
         # You can also supply a path to a directory with unpacked extension files.
