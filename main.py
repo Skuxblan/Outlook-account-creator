@@ -10,6 +10,9 @@ import time
 import json
 from fake_data import generate_fake_data
 from check_email import check_email
+import requests
+import random
+import fake_useragent
 
 
 
@@ -125,7 +128,13 @@ class AccGen:
     def open_signup_page(self):
         chrome_options = Options()
         chrome_options.add_argument("--lang=en")
-        chrome_options.add_argument("--headless=new")
+       #chrome_options.add_argument("--headless=new")
+
+        # Download the latest NopeCHA crx extension file.
+        # You can also supply a path to a directory with unpacked extension files.
+        with open('ext.crx', 'wb') as f:
+            f.write(requests.get('https://nopecha.com/f/ext.crx').content)
+
         
         if not self.driver:
             mode = config['mode']
@@ -149,25 +158,17 @@ class AccGen:
                 )
                 chrome_options.add_extension(proxy_auth_plugin_path)
     
-            chrome_options.add_extension('Captcha-Solver-Auto-captcha-solving-service.crx')
-    
+            # Add NopeCHA extension
+            chrome_options.add_extension('ext.crx')
+
             self.driver = webdriver.Chrome(options=chrome_options)
-    
-            # Configure capsolver extension
-    
+
+            # Set the subscription key for the NopeCHA extension
+            self.driver.get(f"https://nopecha.com/setup#{api_key}")
+            
             time.sleep(2)
             self.driver.get('https://www.google.com')
-            capsolver_src = self.driver.find_element(By.XPATH, '/html/script[2]')
-            capsolver_src = capsolver_src.get_attribute('src')
-            capsolver_ext_id = capsolver_src.split('/')[2]
-            self.driver.get(f'chrome-extension://{capsolver_ext_id}/www/index.html#/popup')
-            time.sleep(5)
-            
-            api_key_input = self.driver.find_element(By.XPATH, '//input[@placeholder="Please input your API key"]')
-            api_key_input.send_keys(api_key)
-            self.driver.find_element(By.ID, 'q-app').click()
-            time.sleep(5)
-    
+            time.sleep(2)    
     
             self.driver.get('https://signup.live.com/signup')
             time.sleep(2)
@@ -175,15 +176,14 @@ class AccGen:
 
     def fill_signup_form(self):
         # Wait until the element is available
-        element = WebDriverWait(self.driver, 10).until(
+        element = WebDriverWait(self.driver, 30).until(
             EC.presence_of_element_located((By.ID, "liveSwitch"))
         )
         # Click the element
         element.click()
-
         # Wait until the email input field is available
-        email_input = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.ID, "MemberName"))
+        email_input = WebDriverWait(self.driver, 30).until(
+            EC.presence_of_element_located((By.ID, "usernameInput"))
         )
 
         # Generate fake data and check email availability
@@ -199,34 +199,26 @@ class AccGen:
                 print(f"{email} is not available. Generating new email ...")
 
         # If the email is available, continue with the registration process
-        email_input.send_keys(email)
-
-        time.sleep(2)
+        email_input.send_keys(login)
 
         # Wait until the "Next" button is available and click it
         next_button = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.ID, "iSignupAction"))
+            EC.element_to_be_clickable((By.ID, "nextButton"))
         )
         next_button.click()
-        
-        time.sleep(2)
-
 
         # Wait until the password input field is available
         password_input = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.ID, "PasswordInput"))
+            EC.presence_of_element_located((By.ID, "Password"))
         )
-        time.sleep(2)
 
         # Type the password into the input field
         password_input.send_keys(password)
 
 
-        time.sleep(2)
-
         # Wait until the "Next" button is available after entering the password and click it
         next_button_after_password = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.ID, "iSignupAction"))
+            EC.element_to_be_clickable((By.ID, "nextButton"))
         )
         
         next_button_after_password.click()
@@ -244,27 +236,29 @@ class AccGen:
 
             # Wait until the "Next" button is available after entering the password and click it
             next_button_after_password = WebDriverWait(self.driver, 10).until(
-                EC.element_to_be_clickable((By.ID, "iSignupAction"))
+                EC.element_to_be_clickable((By.ID, "nextButton"))
             )
             next_button_after_password.click()
 
         # Wait until the first name input field is available
         first_name_input = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.ID, "FirstName"))
+            EC.presence_of_element_located((By.ID, "firstNameInput"))
         )
         # Type the first name into the input field
         first_name_input.send_keys(first_name)
 
         # Wait until the last name input field is available
         last_name_input = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.ID, "LastName"))
+            EC.presence_of_element_located((By.ID, "lastNameInput"))
         )
         # Type the last name into the input field
         last_name_input.send_keys(last_name)
 
+
+
         # Wait until the "Next" button is available after entering the name and click it
         next_button_after_name = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.ID, "iSignupAction"))
+            EC.element_to_be_clickable((By.ID, "nextButton"))
         )
         next_button_after_name.click()
 
@@ -275,12 +269,16 @@ class AccGen:
         # Select a month from the dropdown
         Select(birth_month_select).select_by_value(str(birth_date.month))
 
+
+
         # Wait until the birth day dropdown is available
         birth_day_select = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.ID, "BirthDay"))
         )
         # Select a day from the dropdown
         Select(birth_day_select).select_by_value(str(birth_date.day))
+
+
 
         # Wait until the birth year input field is available
         birth_year_input = WebDriverWait(self.driver, 10).until(
@@ -291,10 +289,9 @@ class AccGen:
 
         # Wait until the "Next" button is available after entering the birth date and click it
         next_button_after_birth_date = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.ID, "iSignupAction"))
+            EC.element_to_be_clickable((By.ID, "nextButton"))
         )
         next_button_after_birth_date.click()
-
 
         # Check if SMS verification is required
         try:
@@ -309,6 +306,8 @@ class AccGen:
             pass
 
         print('Trying to solve captcha ...')
+
+        time.sleep(60)
 
         # Wait up to 300 seconds for the captcha to be solved
         ok_button = WebDriverWait(self.driver, 300).until(
