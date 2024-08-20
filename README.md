@@ -49,9 +49,12 @@ pip install -r requirements.txt
 }
 
 ```
-2. Replace `token_here` with actual value. You should register on [Capsolver](https://www.capsolver.com/) and get token from dashboard page. 
+2. Replace `token_here` with actual value. You should login and get free token on [their website](https://nopecha.com/)
 
-**Note** - make sure you have positive balance on the website. If you have never used capsolver you can claim free trial.
+
+
+
+**Note** - make sure you have enough credits. You can renew your balance after some time.
 
 
 
