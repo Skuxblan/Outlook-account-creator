@@ -77,7 +77,7 @@ which means you won't use any proxy. If you want to use HTTP proxy with that too
 
 - This script is dedicated for chrome browser
 - Make sure you have added chromedriver to your path to avoid issues
-- I have noticed recently Microsoft requires a lot of captcha images to be solved. Something is up with detecting chromedriver. I've tried to use fingerprint solution, but he only one which is working good for me is not able to add extension to browser, so the process can't be fully autoomated.
+- I have noticed recently Microsoft requires a lot of captcha images to be solved. Something is up with detecting chromedriver. I've tried to use fingerprint solution, but the only one which is working good for me is not able to add extension to browser, so the process can't be fully autoomated.
 
 
 ## Tips
